@@ -201,12 +201,13 @@ notes: createdContact.notes_c || "",
       }
 
       // Transform data to database field names - only updateable fields
-      const dbData = { Id: parseInt(id) };
+const dbData = { Id: parseInt(id) };
       if (contactData.name) dbData.name_c = contactData.name;
       if (contactData.company) dbData.company_c = contactData.company;
       if (contactData.email) dbData.email_c = contactData.email;
       if (contactData.phone) dbData.phone_c = contactData.phone;
-if (contactData.tags) {
+      
+      if (contactData.tags) {
         const validTagValues = ['Lead', 'Customer', 'Partner', 'Vendor'];
         let tagsArray = Array.isArray(contactData.tags) ? contactData.tags : [contactData.tags.toString()];
         
@@ -221,7 +222,8 @@ if (contactData.tags) {
         
         dbData.tags_c = validTags.join(',');
       }
-if (contactData.notes) dbData.notes_c = contactData.notes;
+      
+      if (contactData.notes) dbData.notes_c = contactData.notes;
       if (contactData.address) dbData.address_c = contactData.address;
       // Update Name field if name changed
       if (contactData.name) dbData.Name = contactData.name;
