@@ -145,8 +145,8 @@ class DealService {
 
         if (failed.length > 0) {
           console.error(`Failed to create ${failed.length} deals: ${JSON.stringify(failed)}`);
-          failed.forEach(record => {
-            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error}`));
+failed.forEach(record => {
+            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error.message}`));
             if (record.message) toast.error(record.message);
           });
         }
@@ -210,7 +210,7 @@ class DealService {
         if (failed.length > 0) {
           console.error(`Failed to update ${failed.length} deals: ${JSON.stringify(failed)}`);
           failed.forEach(record => {
-            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error}`));
+record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error.message}`));
             if (record.message) toast.error(record.message);
           });
         }

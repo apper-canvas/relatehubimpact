@@ -21,9 +21,9 @@ const DealModal = ({ isOpen, onClose, deal, onSave }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingContacts, setIsLoadingContacts] = useState(true);
 
-  const stages = [
+const stages = [
     { value: "Lead", label: "Lead" },
-    { value: "Qualified", label: "Qualified" },
+    { value: "Discovery", label: "Discovery" },
     { value: "Proposal", label: "Proposal" },
     { value: "Negotiation", label: "Negotiation" },
     { value: "Won", label: "Won" },
