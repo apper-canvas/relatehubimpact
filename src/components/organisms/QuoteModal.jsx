@@ -243,7 +243,7 @@ const newErrors = {};
 <FormField
                     label="Company"
                     type="text"
-                    value={getDisplayValue(formData.company_c)}
+                    value={formData.company_c || ''}
                     onChange={(value) => handleChange('company_c', value)}
                     error={errors.company_c}
                     required
@@ -274,8 +274,8 @@ label="Quote Date"
                   />
                   <FormField
 label="Status"
-                    type="select"
-                    value={getDisplayValue(formData.status_c)}
+type="select"
+                    value={formData.status_c || ''}
                     onChange={(value) => handleChange('status_c', value)}
                     options={statusOptions}
                     error={errors.status_c}
@@ -284,7 +284,7 @@ label="Status"
 <FormField
                     label="Delivery Method"
                     type="select"
-                    value={getDisplayValue(formData.delivery_method_c)}
+                    value={formData.delivery_method_c || ''}
                     onChange={(value) => handleChange('delivery_method_c', value)}
                     options={deliveryOptions}
                     error={errors.delivery_method_c}
@@ -305,44 +305,44 @@ label="Status"
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 <FormField
-                      label="Bill To Name"
+label="Bill To Name"
                       type="text"
-                      value={getDisplayValue(formData.billing_name_c)}
+                      value={formData.billing_name_c || ''}
                       onChange={(value) => handleChange('billing_name_c', value)}
                       error={errors.billing_name_c}
                     />
-<FormField
+                    <FormField
                       label="Street"
                       type="text"
-                      value={getDisplayValue(formData.billing_street_c)}
+                      value={formData.billing_street_c || ''}
                       onChange={(value) => handleChange('billing_street_c', value)}
                       error={errors.billing_street_c}
                     />
-<FormField
+                    <FormField
                       label="City"
                       type="text"
-                      value={getDisplayValue(formData.billing_city_c)}
+                      value={formData.billing_city_c || ''}
                       onChange={(value) => handleChange('billing_city_c', value)}
                       error={errors.billing_city_c}
                     />
-<FormField
+                    <FormField
                       label="State"
                       type="text"
-                      value={getDisplayValue(formData.billing_state_c)}
+                      value={formData.billing_state_c || ''}
                       onChange={(value) => handleChange('billing_state_c', value)}
                       error={errors.billing_state_c}
                     />
-<FormField
+                    <FormField
                       label="Country"
                       type="text"
-                      value={getDisplayValue(formData.billing_country_c)}
+                      value={formData.billing_country_c || ''}
                       onChange={(value) => handleChange('billing_country_c', value)}
                       error={errors.billing_country_c}
                     />
-<FormField
+                    <FormField
                       label="Pincode"
                       type="text"
-                      value={getDisplayValue(formData.billing_pincode_c)}
+                      value={formData.billing_pincode_c || ''}
                       onChange={(value) => handleChange('billing_pincode_c', value)}
                       error={errors.billing_pincode_c}
                     />
@@ -367,45 +367,45 @@ label="Status"
                     </Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
+<FormField
                       label="Ship To Name"
-type="text"
-                      value={getDisplayValue(formData.shipping_name_c)}
+                      type="text"
+                      value={formData.shipping_name_c || ''}
                       onChange={(value) => handleChange('shipping_name_c', value)}
                       error={errors.shipping_name_c}
                     />
                     <FormField
                       label="Street"
-type="text"
-                      value={getDisplayValue(formData.shipping_street_c)}
+                      type="text"
+                      value={formData.shipping_street_c || ''}
                       onChange={(value) => handleChange('shipping_street_c', value)}
                       error={errors.shipping_street_c}
                     />
                     <FormField
                       label="City"
-type="text"
-                      value={getDisplayValue(formData.shipping_city_c)}
+                      type="text"
+                      value={formData.shipping_city_c || ''}
                       onChange={(value) => handleChange('shipping_city_c', value)}
                       error={errors.shipping_city_c}
                     />
                     <FormField
                       label="State"
-type="text"
-                      value={getDisplayValue(formData.shipping_state_c)}
+                      type="text"
+                      value={formData.shipping_state_c || ''}
                       onChange={(value) => handleChange('shipping_state_c', value)}
                       error={errors.shipping_state_c}
                     />
                     <FormField
                       label="Country"
-type="text"
-                      value={getDisplayValue(formData.shipping_country_c)}
+                      type="text"
+                      value={formData.shipping_country_c || ''}
                       onChange={(value) => handleChange('shipping_country_c', value)}
                       error={errors.shipping_country_c}
                     />
                     <FormField
                       label="Pincode"
-type="text"
-                      value={getDisplayValue(formData.shipping_pincode_c)}
+                      type="text"
+                      value={formData.shipping_pincode_c || ''}
                       onChange={(value) => handleChange('shipping_pincode_c', value)}
                       error={errors.shipping_pincode_c}
                     />
