@@ -3,11 +3,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
-
+import { useAuth } from "@/layouts/Root";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const navigation = [
     { name: "Dashboard", path: "/", icon: "LayoutDashboard" },
@@ -55,6 +56,16 @@ const Header = () => {
 
           {/* Quick Add Button */}
 <div className="flex items-center space-x-4">
+            {/* Logout Button */}
+            <Button
+              onClick={logout}
+              variant="ghost"
+              size="sm"
+              className="hidden md:flex text-gray-600 hover:text-primary"
+            >
+              <ApperIcon name="LogOut" className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
 
             {/* Mobile Menu Button */}
             <button
@@ -67,7 +78,7 @@ const Header = () => {
         </div>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && (
+{isMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -92,6 +103,18 @@ const Header = () => {
                   </Link>
                 );
               })}
+              
+              {/* Mobile Logout Button */}
+              <button
+                onClick={() => {
+                  logout();
+                  setIsMenuOpen(false);
+                }}
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 text-gray-600 hover:text-primary hover:bg-gray-50 w-full text-left"
+              >
+                <ApperIcon name="LogOut" className="h-5 w-5" />
+                <span>Logout</span>
+              </button>
             </div>
           </motion.div>
         )}

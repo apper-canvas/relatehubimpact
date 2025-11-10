@@ -27,12 +27,11 @@ class AlertService {
       const now = new Date();
 
       // Task-based alerts
-      tasks.forEach(task => {
+tasks.forEach(task => {
         if (task.completed) return;
 
         const dueDate = new Date(task.dueDate);
         const alertKey = `task-${task.Id}`;
-
         if (this.dismissedAlerts.has(alertKey)) return;
 
         // Overdue tasks
@@ -98,7 +97,7 @@ class AlertService {
 
       // Group by contact and suggest follow-ups for recent activities
       const contactActivityMap = {};
-      recentActivities.forEach(activity => {
+recentActivities.forEach(activity => {
         if (!contactActivityMap[activity.contactId]) {
           contactActivityMap[activity.contactId] = [];
         }
