@@ -10,11 +10,12 @@ const Header = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  const navigation = [
+const navigation = [
     { name: "Dashboard", path: "/", icon: "LayoutDashboard" },
     { name: "Contacts", path: "/contacts", icon: "Users" },
     { name: "Pipeline", path: "/pipeline", icon: "GitBranch" },
     { name: "Tasks", path: "/tasks", icon: "CheckSquare" },
+    { name: "Quotes", path: "/quotes", icon: "FileText" },
   ];
 
 
