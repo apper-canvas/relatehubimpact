@@ -1,10 +1,17 @@
 import routeConfig from "./routes.json";
+import React from "react";
 
 // Custom authorization functions registry
 const customFunctions = {}; // Always keep empty
 
 // Get route configuration with pattern matching
 export const getRouteConfig = (path) => {
+    // Ensure path is a string
+    if (typeof path !== 'string') {
+        console.warn('getRouteConfig received non-string path:', path);
+        return null;
+    }
+    
     // Normalize the path
     if (!path || path === "index") path = "/";
     if (!path.startsWith("/")) path = "/" + path;
