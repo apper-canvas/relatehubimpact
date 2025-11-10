@@ -1,22 +1,25 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import QuoteModal from "@/components/organisms/QuoteModal";
+import SalesOrderModal from "@/components/organisms/SalesOrderModal";
 import { contactService } from "@/services/api/contactService";
 import { dealService } from "@/services/api/dealService";
 import { taskService } from "@/services/api/taskService";
 import { quoteService } from "@/services/api/quoteService";
+import { salesOrderService } from "@/services/api/salesOrderService";
 import { activityService } from "@/services/api/activityService";
 import { alertService } from "@/services/api/alertService";
 import ContactModal from "@/components/organisms/ContactModal";
 import Header from "@/components/organisms/Header";
 import TaskModal from "@/components/organisms/TaskModal";
+import QuoteModal from "@/components/organisms/QuoteModal";
 import DealModal from "@/components/organisms/DealModal";
 const Layout = () => {
-  const [modals, setModals] = useState({
+const [modals, setModals] = useState({
     contact: { isOpen: false, data: null },
     deal: { isOpen: false, data: null },
     task: { isOpen: false, data: null },
-    quote: { isOpen: false, data: null }
+    quote: { isOpen: false, data: null },
+    salesOrder: { isOpen: false, data: null }
   });
 
   const openModal = (type, data = null) => {
@@ -131,24 +134,40 @@ const Layout = () => {
     } catch (error) {
       console.error('Error saving quote:', error);
     }
+};
+
+  const handleSaveSalesOrder = async (salesOrderData) => {
+    try {
+      const salesOrder = modals.salesOrder.data;
+      if (salesOrder) {
+        await salesOrderService.update(salesOrder.Id, salesOrderData);
+      } else {
+        await salesOrderService.create(salesOrderData);
+      }
+      closeModal('salesOrder');
+    } catch (error) {
+      console.error('Error saving sales order:', error);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header 
+<Header 
         onAddContact={() => openModal("contact")}
         onAddDeal={() => openModal("deal")}
         onAddTask={() => openModal("task")}
         onAddQuote={() => openModal("quote")}
+        onAddSalesOrder={() => openModal("salesOrder")}
       />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Outlet 
           context={{
             openContactModal: (data) => openModal('contact', data),
             openDealModal: (data) => openModal('deal', data),
             openTaskModal: (data) => openModal('task', data),
-            openQuoteModal: (data) => openModal('quote', data)
+            openQuoteModal: (data) => openModal('quote', data),
+            openSalesOrderModal: (data) => openModal('salesOrder', data)
           }}
         />
       </main>
@@ -174,11 +193,18 @@ const Layout = () => {
         onSave={handleSaveTask}
       />
 
-      <QuoteModal
+<QuoteModal
         isOpen={modals.quote.isOpen}
         onClose={() => closeModal('quote')}
         quote={modals.quote.data}
         onSave={handleSaveQuote}
+      />
+
+      <SalesOrderModal
+        isOpen={modals.salesOrder.isOpen}
+        onClose={() => closeModal('salesOrder')}
+        salesOrder={modals.salesOrder.data}
+        onSave={handleSaveSalesOrder}
       />
     </div>
   );
