@@ -121,10 +121,20 @@ class ContactService {
       if (contactData.company) dbData.company_c = contactData.company;
       if (contactData.email) dbData.email_c = contactData.email;
       if (contactData.phone) dbData.phone_c = contactData.phone;
-      if (contactData.tags) {
-        dbData.tags_c = Array.isArray(contactData.tags) 
-          ? contactData.tags.join(',')
-          : contactData.tags.toString();
+if (contactData.tags) {
+        const validTagValues = ['Lead', 'Customer', 'Partner', 'Vendor'];
+        let tagsArray = Array.isArray(contactData.tags) ? contactData.tags : [contactData.tags.toString()];
+        
+        // Filter to only include valid picklist values
+        const validTags = tagsArray.filter(tag => validTagValues.includes(tag));
+        
+        // Warn about any invalid tags that were filtered out
+        const invalidTags = tagsArray.filter(tag => !validTagValues.includes(tag));
+        if (invalidTags.length > 0) {
+          console.warn('Invalid tag values filtered out:', invalidTags);
+        }
+        
+        dbData.tags_c = validTags.join(',');
       }
       if (contactData.notes) dbData.notes_c = contactData.notes;
 
@@ -189,10 +199,20 @@ class ContactService {
       if (contactData.company) dbData.company_c = contactData.company;
       if (contactData.email) dbData.email_c = contactData.email;
       if (contactData.phone) dbData.phone_c = contactData.phone;
-      if (contactData.tags) {
-        dbData.tags_c = Array.isArray(contactData.tags) 
-          ? contactData.tags.join(',')
-          : contactData.tags.toString();
+if (contactData.tags) {
+        const validTagValues = ['Lead', 'Customer', 'Partner', 'Vendor'];
+        let tagsArray = Array.isArray(contactData.tags) ? contactData.tags : [contactData.tags.toString()];
+        
+        // Filter to only include valid picklist values
+        const validTags = tagsArray.filter(tag => validTagValues.includes(tag));
+        
+        // Warn about any invalid tags that were filtered out
+        const invalidTags = tagsArray.filter(tag => !validTagValues.includes(tag));
+        if (invalidTags.length > 0) {
+          console.warn('Invalid tag values filtered out:', invalidTags);
+        }
+        
+        dbData.tags_c = validTags.join(',');
       }
       if (contactData.notes) dbData.notes_c = contactData.notes;
 
