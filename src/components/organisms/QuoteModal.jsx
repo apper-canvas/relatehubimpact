@@ -109,9 +109,9 @@ const QuoteModal = ({ isOpen, onClose, quote, onSave }) => {
   };
 
   const validateForm = () => {
-    const newErrors = {};
+const newErrors = {};
 
-    if (!formData.company_c.trim()) {
+    if (!formData.company_c?.trim()) {
       newErrors.company_c = 'Company is required';
     }
 
