@@ -16,6 +16,7 @@ const navigation = [
     { name: "Pipeline", path: "/pipeline", icon: "GitBranch" },
     { name: "Tasks", path: "/tasks", icon: "CheckSquare" },
     { name: "Quotes", path: "/quotes", icon: "FileText" },
+    { name: "Sales Orders", path: "/sales-orders", icon: "ShoppingCart" },
   ];
 
 
