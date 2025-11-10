@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { format, subDays } from "date-fns";
+import ContactModal from "@/components/organisms/ContactModal";
+import DealModal from "@/components/organisms/DealModal";
+import TaskModal from "@/components/organisms/TaskModal";
 import Chart from "react-apexcharts";
 import { alertService } from "@/services/api/alertService";
 import AlertBanner from "@/components/molecules/AlertBanner";
@@ -31,8 +34,12 @@ const [stats, setStats] = useState({
   });
   const [recentActivities, setRecentActivities] = useState([]);
   const [alerts, setAlerts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [showDealModal, setShowDealModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+
   useEffect(() => {
     loadDashboardData();
   }, []);
@@ -474,20 +481,62 @@ try {
             className="card"
           >
             <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
-            <div className="space-y-2">
-              <button className="w-full text-left px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2">
+<div className="space-y-2">
+              <button 
+                onClick={() => setShowContactModal(true)}
+                className="w-full text-left px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              >
                 <ApperIcon name="UserPlus" className="h-4 w-4 text-primary" />
                 <span>Add New Contact</span>
               </button>
-              <button className="w-full text-left px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2">
+              <button 
+                onClick={() => setShowDealModal(true)}
+                className="w-full text-left px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              >
                 <ApperIcon name="Plus" className="h-4 w-4 text-primary" />
                 <span>Create New Deal</span>
               </button>
-              <button className="w-full text-left px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2">
+              <button 
+                onClick={() => setShowTaskModal(true)}
+                className="w-full text-left px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              >
                 <ApperIcon name="Calendar" className="h-4 w-4 text-primary" />
                 <span>Schedule Follow-up</span>
               </button>
             </div>
+
+            {/* Contact Modal */}
+            <ContactModal
+              isOpen={showContactModal}
+              onClose={() => setShowContactModal(false)}
+              contact={null}
+              onSave={async (contactData) => {
+                await contactService.create(contactData);
+                loadDashboardData();
+              }}
+            />
+
+            {/* Deal Modal */}
+            <DealModal
+              isOpen={showDealModal}
+              onClose={() => setShowDealModal(false)}
+              deal={null}
+              onSave={async (dealData) => {
+                await dealService.create(dealData);
+                loadDashboardData();
+              }}
+            />
+
+            {/* Task Modal */}
+            <TaskModal
+              isOpen={showTaskModal}
+              onClose={() => setShowTaskModal(false)}
+              task={null}
+              onSave={async (taskData) => {
+                await taskService.create(taskData);
+                loadDashboardData();
+              }}
+            />
           </motion.div>
 
 {/* Alerts Banner */}
