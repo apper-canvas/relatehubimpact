@@ -1,16 +1,25 @@
 import { getApperClient } from "@/services/apperClient";
 import { toast } from "react-toastify";
-
+import { useSelector, useStore } from 'react-redux';
 class ContactService {
   constructor() {
     this.tableName = 'contact_c';
   }
 
-  async getAll() {
+async getAll() {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error("ApperClient not available");
+      }
+
+      // Get current user for ownership filtering
+      const store = useStore?.() || window.__store__;
+      const currentUser = store?.getState()?.user?.user;
+      
+      if (!currentUser) {
+        console.error("No authenticated user found");
+        return [];
       }
 
       const params = {
@@ -22,10 +31,17 @@ class ContactService {
           {"field": {"Name": "phone_c"}},
           {"field": {"Name": "tags_c"}},
           {"field": {"Name": "notes_c"}},
-{"field": {"Name": "address_c"}},
+          {"field": {"Name": "address_c"}},
+          {"field": {"Name": "Owner"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "ModifiedOn"}}
-        ]
+        ],
+        where: [{
+          "FieldName": "Owner",
+          "Operator": "EqualTo",
+          "Values": [currentUser.userId.toString()],
+          "Include": true
+        }]
       };
 
       const response = await apperClient.fetchRecords(this.tableName, params);
@@ -66,6 +82,14 @@ address: contact.address_c || "",
         throw new Error("ApperClient not available");
       }
 
+// Get current user for ownership validation
+      const store = useStore?.() || window.__store__;
+      const currentUser = store?.getState()?.user?.user;
+      
+      if (!currentUser) {
+        throw new Error("No authenticated user found");
+      }
+
       const params = {
         fields: [
           {"field": {"Name": "Name"}},
@@ -75,7 +99,8 @@ address: contact.address_c || "",
           {"field": {"Name": "phone_c"}},
           {"field": {"Name": "tags_c"}},
           {"field": {"Name": "notes_c"}},
-{"field": {"Name": "address_c"}},
+          {"field": {"Name": "address_c"}},
+          {"field": {"Name": "Owner"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "ModifiedOn"}}
         ]
@@ -83,6 +108,13 @@ address: contact.address_c || "",
 
       const response = await apperClient.getRecordById(this.tableName, parseInt(id), params);
 
+      // Validate ownership
+      if (response.success && response.data) {
+        const ownerId = response.data.Owner?.Id || response.data.Owner;
+        if (ownerId && ownerId.toString() !== currentUser.userId.toString()) {
+          throw new Error("You don't have permission to access this contact");
+        }
+      }
       if (!response.success) {
         console.error(response.message);
         throw new Error(response.message);
@@ -144,15 +176,23 @@ if (contactData.tags) {
 
 if (contactData.address) dbData.address_c = contactData.address;
 
-      // Set Name field (required)
+// Get current user to set as owner
+      const store = useStore?.() || window.__store__;
+      const currentUser = store?.getState()?.user?.user;
+      
+      if (!currentUser) {
+        throw new Error("No authenticated user found");
+      }
+
+      // Set Name field (required) and Owner
       dbData.Name = contactData.name || 'Unnamed Contact';
+      // Note: Owner is a System field and will be auto-assigned by the backend to current user
 
       const params = {
         records: [dbData]
       };
 
       const response = await apperClient.createRecord(this.tableName, params);
-
       if (!response.success) {
         console.error(response.message);
         toast.error(response.message);
@@ -200,8 +240,22 @@ notes: createdContact.notes_c || "",
         throw new Error("ApperClient not available");
       }
 
+// Get current user for ownership validation
+      const store = useStore?.() || window.__store__;
+      const currentUser = store?.getState()?.user?.user;
+      
+      if (!currentUser) {
+        throw new Error("No authenticated user found");
+      }
+
+      // First, verify ownership by fetching the current record
+      const existingRecord = await this.getById(id);
+      if (!existingRecord) {
+        throw new Error("Contact not found or you don't have permission to update it");
+      }
+
       // Transform data to database field names - only updateable fields
-const dbData = { Id: parseInt(id) };
+      const dbData = { Id: parseInt(id) };
       if (contactData.name) dbData.name_c = contactData.name;
       if (contactData.company) dbData.company_c = contactData.company;
       if (contactData.email) dbData.email_c = contactData.email;
@@ -277,8 +331,22 @@ phone: updatedContact.phone_c || "",
   async delete(id) {
     try {
       const apperClient = getApperClient();
-      if (!apperClient) {
+if (!apperClient) {
         throw new Error("ApperClient not available");
+      }
+
+      // Get current user for ownership validation
+      const store = useStore?.() || window.__store__;
+      const currentUser = store?.getState()?.user?.user;
+      
+      if (!currentUser) {
+        throw new Error("No authenticated user found");
+      }
+
+      // First, verify ownership by fetching the current record
+      const existingRecord = await this.getById(id);
+      if (!existingRecord) {
+        throw new Error("Contact not found or you don't have permission to delete it");
       }
 
       const params = {
@@ -292,7 +360,6 @@ phone: updatedContact.phone_c || "",
         toast.error(response.message);
         throw new Error(response.message);
       }
-
       if (response.results) {
         const successful = response.results.filter(r => r.success);
         const failed = response.results.filter(r => !r.success);
