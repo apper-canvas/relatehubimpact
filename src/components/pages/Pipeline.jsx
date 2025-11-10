@@ -19,7 +19,8 @@ const Pipeline = () => {
   const [error, setError] = useState("");
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [draggedDeal, setDraggedDeal] = useState(null);
+const [draggedDeal, setDraggedDeal] = useState(null);
+  const [dragOverStage, setDragOverStage] = useState(null);
 
   const stages = [
     { id: "Lead", name: "Lead", color: "bg-blue-50 border-blue-200" },
@@ -133,16 +134,32 @@ const Pipeline = () => {
     }
   };
 
-  const handleDragStart = (deal) => {
+const handleDragStart = (deal) => {
     setDraggedDeal(deal);
   };
 
   const handleDragEnd = () => {
     setDraggedDeal(null);
+    setDragOverStage(null);
+  };
+
+  const handleDragOver = (e, stageId) => {
+    e.preventDefault();
+    setDragOverStage(stageId);
+  };
+
+  const handleDragLeave = (e) => {
+    // Only clear dragOverStage if we're actually leaving the drop zone
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setDragOverStage(null);
+    }
   };
 
   const handleStageDrop = async (targetStage) => {
-    if (!draggedDeal || draggedDeal.stage === targetStage) return;
+    if (!draggedDeal || draggedDeal.stage === targetStage) {
+      setDragOverStage(null);
+      return;
+    }
 
     try {
       await dealService.update(draggedDeal.Id, { stage: targetStage });
@@ -169,6 +186,7 @@ const Pipeline = () => {
     }
     
     setDraggedDeal(null);
+    setDragOverStage(null);
   };
 
   if (isLoading) return <Loading />;
@@ -235,8 +253,14 @@ const Pipeline = () => {
                 <div
                   key={stage.id}
                   className="flex-1 min-w-[300px]"
-                  onDragOver={(e) => e.preventDefault()}
+onDragOver={(e) => handleDragOver(e, stage.id)}
+                  onDragLeave={handleDragLeave}
                   onDrop={() => handleStageDrop(stage.id)}
+                  className={`min-h-[200px] transition-colors duration-200 ${
+                    dragOverStage === stage.id 
+                      ? 'bg-blue-50 border-2 border-blue-300 border-dashed rounded-lg' 
+                      : ''
+                  }`}
                 >
                   <div className={`rounded-lg border-2 ${stage.color} p-4 min-h-[600px]`}>
                     <div className="flex items-center justify-between mb-4">
@@ -264,8 +288,9 @@ const Pipeline = () => {
                               <DealCard
                                 deal={deal}
                                 contact={contact}
-                                onDragStart={handleDragStart}
+onDragStart={handleDragStart}
                                 onDragEnd={handleDragEnd}
+                                isDragging={draggedDeal?.Id === deal.Id}
                               />
                             </motion.div>
                           );

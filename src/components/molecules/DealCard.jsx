@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
 
-const DealCard = ({ deal, contact, onDragStart, onDragEnd }) => {
+const DealCard = ({ deal, contact, onDragStart, onDragEnd, isDragging = false }) => {
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -18,14 +18,23 @@ const DealCard = ({ deal, contact, onDragStart, onDragEnd }) => {
   };
 
   return (
-    <motion.div
-      drag="y"
-      dragConstraints={{ top: 0, bottom: 0 }}
+<motion.div
+      drag
+      dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
+      dragElastic={0}
       onDragStart={() => onDragStart?.(deal)}
       onDragEnd={() => onDragEnd?.(deal)}
-      whileHover={{ scale: 1.02 }}
-      whileDrag={{ scale: 1.05, rotate: 2, zIndex: 1000 }}
-      className="card p-4 bg-gradient-to-br from-white to-gray-50 hover:shadow-md cursor-grab active:cursor-grabbing mb-3"
+      whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+      whileDrag={{ 
+        scale: 1.08, 
+        rotate: 3, 
+        zIndex: 1000,
+        boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+        transition: { duration: 0.1 }
+      }}
+      className={`card p-4 bg-gradient-to-br from-white to-gray-50 hover:shadow-lg transition-all duration-200 cursor-grab active:cursor-grabbing mb-3 ${
+        isDragging ? 'opacity-70' : ''
+      }`}
     >
       <div className="flex items-start justify-between mb-3">
         <h4 className="font-medium text-gray-900 text-sm">{deal.title}</h4>
