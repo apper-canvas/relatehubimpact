@@ -123,8 +123,7 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
 
   function validateForm() {
     const newErrors = {};
-
-    if (!formData.name_c?.trim()) {
+if (!formData.name_c || !String(formData.name_c).trim()) {
       newErrors.name_c = 'Name is required';
     }
 
