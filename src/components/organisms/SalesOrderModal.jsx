@@ -29,11 +29,17 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
     if (isOpen) {
       loadLookupData();
       if (salesOrder) {
-        setFormData({
+setFormData({
           name_c: salesOrder.name_c || '',
-          contact_id_c: getDisplayValue(salesOrder.contact_id_c, 'lookup'),
-          deal_id_c: getDisplayValue(salesOrder.deal_id_c, 'lookup'),
-          quote_id_c: getDisplayValue(salesOrder.quote_id_c, 'lookup'),
+          contact_id_c: (typeof salesOrder.contact_id_c === 'object' && salesOrder.contact_id_c?.Id) 
+            ? salesOrder.contact_id_c.Id.toString() 
+            : salesOrder.contact_id_c?.toString() || '',
+          deal_id_c: (typeof salesOrder.deal_id_c === 'object' && salesOrder.deal_id_c?.Id) 
+            ? salesOrder.deal_id_c.Id.toString() 
+            : salesOrder.deal_id_c?.toString() || '',
+          quote_id_c: (typeof salesOrder.quote_id_c === 'object' && salesOrder.quote_id_c?.Id) 
+            ? salesOrder.quote_id_c.Id.toString() 
+            : salesOrder.quote_id_c?.toString() || '',
           order_date_c: salesOrder.order_date_c || '',
           status_c: salesOrder.status_c || 'Draft',
           total_amount_c: salesOrder.total_amount_c || ''
@@ -53,15 +59,6 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
     }
   }, [isOpen, salesOrder]);
 
-  function getDisplayValue(value, fieldType = "text") {
-    if (fieldType === "lookup") {
-      if (typeof value === 'object' && value !== null) {
-        return value.Id || '';
-      }
-      return value || '';
-    }
-    return value || '';
-  }
 
   const loadLookupData = async () => {
     setLookupLoading(true);
