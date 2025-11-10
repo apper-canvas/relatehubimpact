@@ -12,6 +12,7 @@ const Header = () => {
 
 const navigation = [
     { name: "Dashboard", path: "/", icon: "LayoutDashboard" },
+    { name: "Companies", path: "/companies", icon: "Building2" },
     { name: "Contacts", path: "/contacts", icon: "Users" },
     { name: "Pipeline", path: "/pipeline", icon: "GitBranch" },
     { name: "Tasks", path: "/tasks", icon: "CheckSquare" },

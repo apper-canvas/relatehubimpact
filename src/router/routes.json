@@ -12,6 +12,20 @@
       "redirectOnDeny": "/login"
     }
   },
+  "/companies": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be logged in to view companies",
+            "rule": "authenticated"
+          }
+        ],
+        "operator": "OR"
+      },
+      "redirectOnDeny": "/login"
+    }
+  },
   "/contacts": {
     "allow": {
       "when": {
@@ -38,7 +52,7 @@
       "redirectOnDeny": "/login"
     }
   },
-"/tasks": {
+  "/tasks": {
     "allow": {
       "when": {
         "conditions": [
@@ -63,7 +77,7 @@
       },
       "redirectOnDeny": "/login"
     }
-},
+  },
   "/sales-orders": {
     "allow": {
       "when": {
