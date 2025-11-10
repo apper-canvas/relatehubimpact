@@ -250,13 +250,12 @@ const handleDragStart = (deal) => {
               const stageDeals = getDealsByStage(stage.id);
               
               return (
-                <div
+<div
                   key={stage.id}
-                  className="flex-1 min-w-[300px]"
-onDragOver={(e) => handleDragOver(e, stage.id)}
+                  onDragOver={(e) => handleDragOver(e, stage.id)}
                   onDragLeave={handleDragLeave}
                   onDrop={() => handleStageDrop(stage.id)}
-                  className={`min-h-[200px] transition-colors duration-200 ${
+                  className={`flex-1 min-w-[300px] min-h-[200px] transition-colors duration-200 ${
                     dragOverStage === stage.id 
                       ? 'bg-blue-50 border-2 border-blue-300 border-dashed rounded-lg' 
                       : ''
