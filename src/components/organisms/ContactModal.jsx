@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { toast } from "react-toastify";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import FormField from "@/components/molecules/FormField";
+import { toast } from "react-toastify";
 
 const ContactModal = ({ isOpen, onClose, contact, onSave }) => {
   const [formData, setFormData] = useState({

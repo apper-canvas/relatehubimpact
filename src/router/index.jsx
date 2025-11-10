@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
+import { getRouteConfig } from "@/router/route.utils";
 import Layout from "@/components/organisms/Layout";
 import Root from "@/layouts/Root";
-import { getRouteConfig } from "@/router/route.utils";
 
 // Lazy load all page components
 const Dashboard = lazy(() => import("@/components/pages/Dashboard"));
@@ -34,7 +34,8 @@ const LoadingFallback = () => (
 
 // Helper function to create routes with suspense
 const createRoute = ({ path, element, index, children, ...props }) => {
-  const routeConfig = getRouteConfig(path);
+  const routeConfig = getRouteConfig({ path, index, ...props });
+  
   return {
     ...routeConfig,
     path,
