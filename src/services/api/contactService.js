@@ -1,24 +1,22 @@
-import { getApperClient } from "@/services/apperClient";
 import { toast } from "react-toastify";
-import { useSelector, useStore } from 'react-redux';
+import { getApperClient } from "@/services/apperClient";
+
+// Service file - no React hooks needed, components handle Redux state
 class ContactService {
   constructor() {
     this.tableName = 'contact_c';
   }
 
-async getAll() {
+  async getAll(currentUser = null) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error("ApperClient not available");
       }
 
-      // Get current user for ownership filtering
-      const store = useStore?.() || window.__store__;
-      const currentUser = store?.getState()?.user?.user;
-      
+      // Current user must be passed from component
       if (!currentUser) {
-        console.error("No authenticated user found");
+        console.error("No authenticated user provided");
         return [];
       }
 
@@ -75,21 +73,17 @@ address: contact.address_c || "",
     }
   }
 
-  async getById(id) {
+async getById(id, currentUser = null) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error("ApperClient not available");
       }
 
-// Get current user for ownership validation
-      const store = useStore?.() || window.__store__;
-      const currentUser = store?.getState()?.user?.user;
-      
+      // Current user must be passed from component
       if (!currentUser) {
-        throw new Error("No authenticated user found");
+        throw new Error("No authenticated user provided");
       }
-
       const params = {
         fields: [
           {"field": {"Name": "Name"}},
@@ -144,11 +138,16 @@ address: contact.address_c || "",
     }
   }
 
-  async create(contactData) {
+async create(contactData, currentUser = null) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error("ApperClient not available");
+      }
+
+      // Current user must be passed from component
+      if (!currentUser) {
+        throw new Error("No authenticated user provided");
       }
 
       // Transform data to database field names - only updateable fields
@@ -157,7 +156,7 @@ address: contact.address_c || "",
       if (contactData.company) dbData.company_c = contactData.company;
       if (contactData.email) dbData.email_c = contactData.email;
       if (contactData.phone) dbData.phone_c = contactData.phone;
-if (contactData.tags) {
+      if (contactData.tags) {
         const validTagValues = ['Lead', 'Customer', 'Partner', 'Vendor'];
         let tagsArray = Array.isArray(contactData.tags) ? contactData.tags : [contactData.tags.toString()];
         
@@ -173,17 +172,7 @@ if (contactData.tags) {
         dbData.tags_c = validTags.join(',');
       }
       if (contactData.notes) dbData.notes_c = contactData.notes;
-
-if (contactData.address) dbData.address_c = contactData.address;
-
-// Get current user to set as owner
-      const store = useStore?.() || window.__store__;
-      const currentUser = store?.getState()?.user?.user;
-      
-      if (!currentUser) {
-        throw new Error("No authenticated user found");
-      }
-
+      if (contactData.address) dbData.address_c = contactData.address;
       // Set Name field (required) and Owner
       dbData.Name = contactData.name || 'Unnamed Contact';
       // Note: Owner is a System field and will be auto-assigned by the backend to current user
@@ -233,23 +222,19 @@ notes: createdContact.notes_c || "",
     }
   }
 
-  async update(id, contactData) {
+async update(id, contactData, currentUser = null) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error("ApperClient not available");
       }
 
-// Get current user for ownership validation
-      const store = useStore?.() || window.__store__;
-      const currentUser = store?.getState()?.user?.user;
-      
+      // Current user must be passed from component
       if (!currentUser) {
-        throw new Error("No authenticated user found");
+        throw new Error("No authenticated user provided");
       }
-
-      // First, verify ownership by fetching the current record
-      const existingRecord = await this.getById(id);
+// First, verify ownership by fetching the current record
+      const existingRecord = await this.getById(id, currentUser);
       if (!existingRecord) {
         throw new Error("Contact not found or you don't have permission to update it");
       }
@@ -328,23 +313,19 @@ phone: updatedContact.phone_c || "",
     }
   }
 
-  async delete(id) {
+async delete(id, currentUser = null) {
     try {
       const apperClient = getApperClient();
-if (!apperClient) {
+      if (!apperClient) {
         throw new Error("ApperClient not available");
       }
 
-      // Get current user for ownership validation
-      const store = useStore?.() || window.__store__;
-      const currentUser = store?.getState()?.user?.user;
-      
+      // Current user must be passed from component
       if (!currentUser) {
-        throw new Error("No authenticated user found");
+        throw new Error("No authenticated user provided");
       }
-
-      // First, verify ownership by fetching the current record
-      const existingRecord = await this.getById(id);
+// First, verify ownership by fetching the current record
+      const existingRecord = await this.getById(id, currentUser);
       if (!existingRecord) {
         throw new Error("Contact not found or you don't have permission to delete it");
       }
