@@ -22,6 +22,7 @@ class ContactService {
           {"field": {"Name": "phone_c"}},
           {"field": {"Name": "tags_c"}},
           {"field": {"Name": "notes_c"}},
+{"field": {"Name": "address_c"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "ModifiedOn"}}
         ]
@@ -48,6 +49,7 @@ class ContactService {
         phone: contact.phone_c || "",
         tags: contact.tags_c ? contact.tags_c.split(',').map(tag => tag.trim()) : [],
         notes: contact.notes_c || "",
+address: contact.address_c || "",
         createdAt: contact.CreatedOn,
         updatedAt: contact.ModifiedOn
       }));
@@ -73,6 +75,7 @@ class ContactService {
           {"field": {"Name": "phone_c"}},
           {"field": {"Name": "tags_c"}},
           {"field": {"Name": "notes_c"}},
+{"field": {"Name": "address_c"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "ModifiedOn"}}
         ]
@@ -99,6 +102,7 @@ class ContactService {
         phone: contact.phone_c || "",
         tags: contact.tags_c ? contact.tags_c.split(',').map(tag => tag.trim()) : [],
         notes: contact.notes_c || "",
+address: contact.address_c || "",
         createdAt: contact.CreatedOn,
         updatedAt: contact.ModifiedOn
       };
@@ -138,6 +142,8 @@ if (contactData.tags) {
       }
       if (contactData.notes) dbData.notes_c = contactData.notes;
 
+if (contactData.address) dbData.address_c = contactData.address;
+
       // Set Name field (required)
       dbData.Name = contactData.name || 'Unnamed Contact';
 
@@ -174,7 +180,8 @@ if (contactData.tags) {
             email: createdContact.email_c || "",
             phone: createdContact.phone_c || "",
             tags: createdContact.tags_c ? createdContact.tags_c.split(',').map(tag => tag.trim()) : [],
-            notes: createdContact.notes_c || "",
+notes: createdContact.notes_c || "",
+            address: createdContact.address_c || "",
             createdAt: createdContact.CreatedOn,
             updatedAt: createdContact.ModifiedOn
           };
@@ -214,8 +221,8 @@ if (contactData.tags) {
         
         dbData.tags_c = validTags.join(',');
       }
-      if (contactData.notes) dbData.notes_c = contactData.notes;
-
+if (contactData.notes) dbData.notes_c = contactData.notes;
+      if (contactData.address) dbData.address_c = contactData.address;
       // Update Name field if name changed
       if (contactData.name) dbData.Name = contactData.name;
 
@@ -250,8 +257,9 @@ if (contactData.tags) {
             name: updatedContact.name_c || updatedContact.Name || "",
             company: updatedContact.company_c || "",
             email: updatedContact.email_c || "",
-            phone: updatedContact.phone_c || "",
+phone: updatedContact.phone_c || "",
             tags: updatedContact.tags_c ? updatedContact.tags_c.split(',').map(tag => tag.trim()) : [],
+            address: updatedContact.address_c || "",
             notes: updatedContact.notes_c || "",
             createdAt: updatedContact.CreatedOn,
             updatedAt: updatedContact.ModifiedOn
