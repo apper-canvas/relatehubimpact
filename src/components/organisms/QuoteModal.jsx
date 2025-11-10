@@ -55,22 +55,22 @@ const QuoteModal = ({ isOpen, onClose, quote, onSave }) => {
     if (isOpen) {
       loadContacts();
       loadDeals();
-      if (quote) {
+if (quote) {
         setFormData({
-          company_c: quote.company_c || '',
-contact_id_c: quote.contact_id_c?.Id || quote.contact_id_c || null,
+          company_c: getDisplayValue(quote.company_c),
+          contact_id_c: quote.contact_id_c?.Id || quote.contact_id_c || null,
           deal_id_c: quote.deal_id_c?.Id || quote.deal_id_c || null,
           quote_date_c: quote.quote_date_c || '',
           status_c: quote.status_c || 'Draft',
-          delivery_method_c: quote.delivery_method_c || 'Email',
+delivery_method_c: quote.delivery_method_c || 'Email',
           expires_on_c: quote.expires_on_c || '',
-          billing_name_c: quote.billing_name_c || '',
+          billing_name_c: getDisplayValue(quote.billing_name_c),
           billing_street_c: quote.billing_street_c || '',
           billing_city_c: quote.billing_city_c || '',
           billing_state_c: quote.billing_state_c || '',
-          billing_country_c: quote.billing_country_c || '',
+billing_country_c: quote.billing_country_c || '',
           billing_pincode_c: quote.billing_pincode_c || '',
-          shipping_name_c: quote.shipping_name_c || '',
+          shipping_name_c: getDisplayValue(quote.shipping_name_c),
           shipping_street_c: quote.shipping_street_c || '',
           shipping_city_c: quote.shipping_city_c || '',
           shipping_state_c: quote.shipping_state_c || '',
@@ -241,9 +241,9 @@ const newErrors = {};
                 {/* Basic Information */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 <FormField
-                    label="Company"
+label="Company"
                     type="text"
-                    value={formData.company_c || ''}
+                    value={getDisplayValue(formData.company_c)}
                     onChange={(value) => handleChange('company_c', value)}
                     error={errors.company_c}
                     required
@@ -307,7 +307,7 @@ type="select"
 <FormField
 label="Bill To Name"
                       type="text"
-                      value={formData.billing_name_c || ''}
+                      value={getDisplayValue(formData.billing_name_c)}
                       onChange={(value) => handleChange('billing_name_c', value)}
                       error={errors.billing_name_c}
                     />
@@ -368,9 +368,9 @@ label="Bill To Name"
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 <FormField
-                      label="Ship To Name"
+label="Ship To Name"
                       type="text"
-                      value={formData.shipping_name_c || ''}
+                      value={getDisplayValue(formData.shipping_name_c)}
                       onChange={(value) => handleChange('shipping_name_c', value)}
                       error={errors.shipping_name_c}
                     />
