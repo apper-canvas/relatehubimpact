@@ -1,23 +1,16 @@
-import { toast } from "react-toastify";
 import { getApperClient } from "@/services/apperClient";
+import { toast } from "react-toastify";
 
-// Service file - no React hooks needed, components handle Redux state
 class ContactService {
   constructor() {
     this.tableName = 'contact_c';
   }
 
-  async getAll(currentUser = null) {
+  async getAll() {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error("ApperClient not available");
-      }
-
-      // Current user must be passed from component
-      if (!currentUser) {
-        console.error("No authenticated user provided");
-        return [];
       }
 
       const params = {
@@ -29,17 +22,9 @@ class ContactService {
           {"field": {"Name": "phone_c"}},
           {"field": {"Name": "tags_c"}},
           {"field": {"Name": "notes_c"}},
-          {"field": {"Name": "address_c"}},
-          {"field": {"Name": "Owner"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "ModifiedOn"}}
-        ],
-        where: [{
-          "FieldName": "Owner",
-          "Operator": "EqualTo",
-          "Values": [currentUser.userId.toString()],
-          "Include": true
-        }]
+        ]
       };
 
       const response = await apperClient.fetchRecords(this.tableName, params);
@@ -63,7 +48,6 @@ class ContactService {
         phone: contact.phone_c || "",
         tags: contact.tags_c ? contact.tags_c.split(',').map(tag => tag.trim()) : [],
         notes: contact.notes_c || "",
-address: contact.address_c || "",
         createdAt: contact.CreatedOn,
         updatedAt: contact.ModifiedOn
       }));
@@ -73,17 +57,13 @@ address: contact.address_c || "",
     }
   }
 
-async getById(id, currentUser = null) {
+  async getById(id) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error("ApperClient not available");
       }
 
-      // Current user must be passed from component
-      if (!currentUser) {
-        throw new Error("No authenticated user provided");
-      }
       const params = {
         fields: [
           {"field": {"Name": "Name"}},
@@ -93,8 +73,6 @@ async getById(id, currentUser = null) {
           {"field": {"Name": "phone_c"}},
           {"field": {"Name": "tags_c"}},
           {"field": {"Name": "notes_c"}},
-          {"field": {"Name": "address_c"}},
-          {"field": {"Name": "Owner"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "ModifiedOn"}}
         ]
@@ -102,13 +80,6 @@ async getById(id, currentUser = null) {
 
       const response = await apperClient.getRecordById(this.tableName, parseInt(id), params);
 
-      // Validate ownership
-      if (response.success && response.data) {
-        const ownerId = response.data.Owner?.Id || response.data.Owner;
-        if (ownerId && ownerId.toString() !== currentUser.userId.toString()) {
-          throw new Error("You don't have permission to access this contact");
-        }
-      }
       if (!response.success) {
         console.error(response.message);
         throw new Error(response.message);
@@ -128,7 +99,6 @@ async getById(id, currentUser = null) {
         phone: contact.phone_c || "",
         tags: contact.tags_c ? contact.tags_c.split(',').map(tag => tag.trim()) : [],
         notes: contact.notes_c || "",
-address: contact.address_c || "",
         createdAt: contact.CreatedOn,
         updatedAt: contact.ModifiedOn
       };
@@ -138,16 +108,11 @@ address: contact.address_c || "",
     }
   }
 
-async create(contactData, currentUser = null) {
+  async create(contactData) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error("ApperClient not available");
-      }
-
-      // Current user must be passed from component
-      if (!currentUser) {
-        throw new Error("No authenticated user provided");
       }
 
       // Transform data to database field names - only updateable fields
@@ -156,7 +121,7 @@ async create(contactData, currentUser = null) {
       if (contactData.company) dbData.company_c = contactData.company;
       if (contactData.email) dbData.email_c = contactData.email;
       if (contactData.phone) dbData.phone_c = contactData.phone;
-      if (contactData.tags) {
+if (contactData.tags) {
         const validTagValues = ['Lead', 'Customer', 'Partner', 'Vendor'];
         let tagsArray = Array.isArray(contactData.tags) ? contactData.tags : [contactData.tags.toString()];
         
@@ -172,16 +137,16 @@ async create(contactData, currentUser = null) {
         dbData.tags_c = validTags.join(',');
       }
       if (contactData.notes) dbData.notes_c = contactData.notes;
-      if (contactData.address) dbData.address_c = contactData.address;
-      // Set Name field (required) and Owner
+
+      // Set Name field (required)
       dbData.Name = contactData.name || 'Unnamed Contact';
-      // Note: Owner is a System field and will be auto-assigned by the backend to current user
 
       const params = {
         records: [dbData]
       };
 
       const response = await apperClient.createRecord(this.tableName, params);
+
       if (!response.success) {
         console.error(response.message);
         toast.error(response.message);
@@ -209,8 +174,7 @@ async create(contactData, currentUser = null) {
             email: createdContact.email_c || "",
             phone: createdContact.phone_c || "",
             tags: createdContact.tags_c ? createdContact.tags_c.split(',').map(tag => tag.trim()) : [],
-notes: createdContact.notes_c || "",
-            address: createdContact.address_c || "",
+            notes: createdContact.notes_c || "",
             createdAt: createdContact.CreatedOn,
             updatedAt: createdContact.ModifiedOn
           };
@@ -222,21 +186,11 @@ notes: createdContact.notes_c || "",
     }
   }
 
-async update(id, contactData, currentUser = null) {
+  async update(id, contactData) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error("ApperClient not available");
-      }
-
-      // Current user must be passed from component
-      if (!currentUser) {
-        throw new Error("No authenticated user provided");
-      }
-// First, verify ownership by fetching the current record
-      const existingRecord = await this.getById(id, currentUser);
-      if (!existingRecord) {
-        throw new Error("Contact not found or you don't have permission to update it");
       }
 
       // Transform data to database field names - only updateable fields
@@ -245,8 +199,7 @@ async update(id, contactData, currentUser = null) {
       if (contactData.company) dbData.company_c = contactData.company;
       if (contactData.email) dbData.email_c = contactData.email;
       if (contactData.phone) dbData.phone_c = contactData.phone;
-      
-      if (contactData.tags) {
+if (contactData.tags) {
         const validTagValues = ['Lead', 'Customer', 'Partner', 'Vendor'];
         let tagsArray = Array.isArray(contactData.tags) ? contactData.tags : [contactData.tags.toString()];
         
@@ -261,9 +214,8 @@ async update(id, contactData, currentUser = null) {
         
         dbData.tags_c = validTags.join(',');
       }
-      
       if (contactData.notes) dbData.notes_c = contactData.notes;
-      if (contactData.address) dbData.address_c = contactData.address;
+
       // Update Name field if name changed
       if (contactData.name) dbData.Name = contactData.name;
 
@@ -298,9 +250,8 @@ async update(id, contactData, currentUser = null) {
             name: updatedContact.name_c || updatedContact.Name || "",
             company: updatedContact.company_c || "",
             email: updatedContact.email_c || "",
-phone: updatedContact.phone_c || "",
+            phone: updatedContact.phone_c || "",
             tags: updatedContact.tags_c ? updatedContact.tags_c.split(',').map(tag => tag.trim()) : [],
-            address: updatedContact.address_c || "",
             notes: updatedContact.notes_c || "",
             createdAt: updatedContact.CreatedOn,
             updatedAt: updatedContact.ModifiedOn
@@ -313,21 +264,11 @@ phone: updatedContact.phone_c || "",
     }
   }
 
-async delete(id, currentUser = null) {
+  async delete(id) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
         throw new Error("ApperClient not available");
-      }
-
-      // Current user must be passed from component
-      if (!currentUser) {
-        throw new Error("No authenticated user provided");
-      }
-// First, verify ownership by fetching the current record
-      const existingRecord = await this.getById(id, currentUser);
-      if (!existingRecord) {
-        throw new Error("Contact not found or you don't have permission to delete it");
       }
 
       const params = {
@@ -341,6 +282,7 @@ async delete(id, currentUser = null) {
         toast.error(response.message);
         throw new Error(response.message);
       }
+
       if (response.results) {
         const successful = response.results.filter(r => r.success);
         const failed = response.results.filter(r => !r.success);

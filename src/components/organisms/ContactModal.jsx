@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { toast } from "react-toastify";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import FormField from "@/components/molecules/FormField";
+import { toast } from "react-toastify";
 
 const ContactModal = ({ isOpen, onClose, contact, onSave }) => {
-const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     company: "",
     email: "",
     phone: "",
     tags: "",
     notes: "",
-    address: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -21,24 +20,22 @@ const [formData, setFormData] = useState({
 
   useEffect(() => {
     if (contact) {
-setFormData({
+      setFormData({
         name: contact.name || "",
         company: contact.company || "",
         email: contact.email || "",
         phone: contact.phone || "",
         tags: contact.tags ? contact.tags.join(", ") : "",
         notes: contact.notes || "",
-        address: contact.address || "",
       });
     } else {
       setFormData({
-name: "",
+        name: "",
         company: "",
         email: "",
         phone: "",
         tags: "",
         notes: "",
-        address: "",
       });
     }
     setErrors({});
@@ -169,22 +166,14 @@ name: "",
               error={errors.tags}
               placeholder="Enter tags separated by commas"
             />
-<FormField
+
+            <FormField
               label="Notes"
               type="textarea"
               value={formData.notes}
               onChange={(e) => handleChange("notes", e.target.value)}
               error={errors.notes}
               placeholder="Enter any additional notes"
-            />
-
-            <FormField
-              label="Address"
-              type="textarea"
-              value={formData.address}
-              onChange={(e) => handleChange("address", e.target.value)}
-              error={errors.address}
-              placeholder="Enter contact address"
             />
 
             {/* Actions */}

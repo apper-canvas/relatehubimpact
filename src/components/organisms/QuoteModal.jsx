@@ -21,6 +21,7 @@ const QuoteModal = ({ isOpen, onClose, quote, onSave }) => {
     billing_city_c: '',
     billing_state_c: '',
     billing_country_c: '',
+    billing_pincode_c: '',
     shipping_name_c: '',
     shipping_street_c: '',
     shipping_city_c: '',
@@ -28,24 +29,6 @@ const QuoteModal = ({ isOpen, onClose, quote, onSave }) => {
     shipping_country_c: '',
     shipping_pincode_c: ''
   });
-
-  // Helper function to safely extract display values for form fields
-  const getDisplayValue = (value, fieldType = 'text') => {
-    if (value === null || value === undefined) return '';
-    
-    // Handle lookup objects - display the Name property
-    if (typeof value === 'object' && value.Id && value.Name) {
-      return fieldType === 'select' ? value.Id : value.Name;
-    }
-    
-    // Handle date fields - ensure proper formatting
-    if (fieldType === 'date' && value) {
-      const date = new Date(value);
-      return date instanceof Date && !isNaN(date) ? date.toISOString().split('T')[0] : '';
-    }
-    
-    return value.toString();
-  };
   const [contacts, setContacts] = useState([]);
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -55,22 +38,22 @@ const QuoteModal = ({ isOpen, onClose, quote, onSave }) => {
     if (isOpen) {
       loadContacts();
       loadDeals();
-if (quote) {
+      if (quote) {
         setFormData({
-          company_c: getDisplayValue(quote.company_c),
-          contact_id_c: quote.contact_id_c?.Id || quote.contact_id_c || null,
-          deal_id_c: quote.deal_id_c?.Id || quote.deal_id_c || null,
+          company_c: quote.company_c || '',
+          contact_id_c: quote.contact_id_c || null,
+          deal_id_c: quote.deal_id_c || null,
           quote_date_c: quote.quote_date_c || '',
           status_c: quote.status_c || 'Draft',
-delivery_method_c: quote.delivery_method_c || 'Email',
+          delivery_method_c: quote.delivery_method_c || 'Email',
           expires_on_c: quote.expires_on_c || '',
-          billing_name_c: getDisplayValue(quote.billing_name_c),
+          billing_name_c: quote.billing_name_c || '',
           billing_street_c: quote.billing_street_c || '',
           billing_city_c: quote.billing_city_c || '',
           billing_state_c: quote.billing_state_c || '',
-billing_country_c: quote.billing_country_c || '',
+          billing_country_c: quote.billing_country_c || '',
           billing_pincode_c: quote.billing_pincode_c || '',
-          shipping_name_c: getDisplayValue(quote.shipping_name_c),
+          shipping_name_c: quote.shipping_name_c || '',
           shipping_street_c: quote.shipping_street_c || '',
           shipping_city_c: quote.shipping_city_c || '',
           shipping_state_c: quote.shipping_state_c || '',
@@ -81,7 +64,7 @@ billing_country_c: quote.billing_country_c || '',
         // Reset form for new quote
         setFormData({
           company_c: '',
-contact_id_c: null,
+          contact_id_c: null,
           deal_id_c: null,
           quote_date_c: new Date().toISOString().split('T')[0],
           status_c: 'Draft',
@@ -126,9 +109,9 @@ contact_id_c: null,
   };
 
   const validateForm = () => {
-const newErrors = {};
+    const newErrors = {};
 
-    if (!formData.company_c?.trim()) {
+    if (!formData.company_c.trim()) {
       newErrors.company_c = 'Company is required';
     }
 
@@ -240,59 +223,59 @@ const newErrors = {};
               <div className="space-y-6">
                 {/* Basic Information */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-<FormField
-label="Company"
+                  <FormField
+                    label="Company"
                     type="text"
-                    value={getDisplayValue(formData.company_c)}
+                    value={formData.company_c}
                     onChange={(value) => handleChange('company_c', value)}
                     error={errors.company_c}
                     required
                   />
-<FormField
+                  <FormField
                     label="Contact"
                     type="select"
-                    value={getDisplayValue(formData.contact_id_c, 'select') || ''}
+                    value={formData.contact_id_c?.Id || formData.contact_id_c || ''}
                     onChange={(value) => handleChange('contact_id_c', parseInt(value) || null)}
                     options={[{ value: '', label: 'Select Contact' }, ...contactOptions]}
                     error={errors.contact_id_c}
                   />
                   <FormField
-label="Deal"
+                    label="Deal"
                     type="select"
-                    value={getDisplayValue(formData.deal_id_c, 'select') || ''}
+                    value={formData.deal_id_c?.Id || formData.deal_id_c || ''}
                     onChange={(value) => handleChange('deal_id_c', parseInt(value) || null)}
                     options={[{ value: '', label: 'Select Deal' }, ...dealOptions]}
                     error={errors.deal_id_c}
                   />
                   <FormField
-label="Quote Date"
+                    label="Quote Date"
                     type="date"
-                    value={getDisplayValue(formData.quote_date_c, 'date')}
+                    value={formData.quote_date_c}
                     onChange={(value) => handleChange('quote_date_c', value)}
                     error={errors.quote_date_c}
                     required
                   />
                   <FormField
-label="Status"
-type="select"
-                    value={formData.status_c || ''}
+                    label="Status"
+                    type="select"
+                    value={formData.status_c}
                     onChange={(value) => handleChange('status_c', value)}
                     options={statusOptions}
                     error={errors.status_c}
                     required
                   />
-<FormField
+                  <FormField
                     label="Delivery Method"
                     type="select"
-                    value={formData.delivery_method_c || ''}
+                    value={formData.delivery_method_c}
                     onChange={(value) => handleChange('delivery_method_c', value)}
                     options={deliveryOptions}
                     error={errors.delivery_method_c}
                   />
-<FormField
+                  <FormField
                     label="Expires On"
                     type="date"
-                    value={getDisplayValue(formData.expires_on_c, 'date')}
+                    value={formData.expires_on_c}
                     onChange={(value) => handleChange('expires_on_c', value)}
                     error={errors.expires_on_c}
                   />
@@ -304,45 +287,45 @@ type="select"
                     Billing Address
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-<FormField
-label="Bill To Name"
+                    <FormField
+                      label="Bill To Name"
                       type="text"
-                      value={getDisplayValue(formData.billing_name_c)}
+                      value={formData.billing_name_c}
                       onChange={(value) => handleChange('billing_name_c', value)}
                       error={errors.billing_name_c}
                     />
                     <FormField
                       label="Street"
                       type="text"
-                      value={formData.billing_street_c || ''}
+                      value={formData.billing_street_c}
                       onChange={(value) => handleChange('billing_street_c', value)}
                       error={errors.billing_street_c}
                     />
                     <FormField
                       label="City"
                       type="text"
-                      value={formData.billing_city_c || ''}
+                      value={formData.billing_city_c}
                       onChange={(value) => handleChange('billing_city_c', value)}
                       error={errors.billing_city_c}
                     />
                     <FormField
                       label="State"
                       type="text"
-                      value={formData.billing_state_c || ''}
+                      value={formData.billing_state_c}
                       onChange={(value) => handleChange('billing_state_c', value)}
                       error={errors.billing_state_c}
                     />
                     <FormField
                       label="Country"
                       type="text"
-                      value={formData.billing_country_c || ''}
+                      value={formData.billing_country_c}
                       onChange={(value) => handleChange('billing_country_c', value)}
                       error={errors.billing_country_c}
                     />
                     <FormField
                       label="Pincode"
                       type="text"
-                      value={formData.billing_pincode_c || ''}
+                      value={formData.billing_pincode_c}
                       onChange={(value) => handleChange('billing_pincode_c', value)}
                       error={errors.billing_pincode_c}
                     />
@@ -367,45 +350,45 @@ label="Bill To Name"
                     </Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-<FormField
-label="Ship To Name"
+                    <FormField
+                      label="Ship To Name"
                       type="text"
-                      value={getDisplayValue(formData.shipping_name_c)}
+                      value={formData.shipping_name_c}
                       onChange={(value) => handleChange('shipping_name_c', value)}
                       error={errors.shipping_name_c}
                     />
                     <FormField
                       label="Street"
                       type="text"
-                      value={formData.shipping_street_c || ''}
+                      value={formData.shipping_street_c}
                       onChange={(value) => handleChange('shipping_street_c', value)}
                       error={errors.shipping_street_c}
                     />
                     <FormField
                       label="City"
                       type="text"
-                      value={formData.shipping_city_c || ''}
+                      value={formData.shipping_city_c}
                       onChange={(value) => handleChange('shipping_city_c', value)}
                       error={errors.shipping_city_c}
                     />
                     <FormField
                       label="State"
                       type="text"
-                      value={formData.shipping_state_c || ''}
+                      value={formData.shipping_state_c}
                       onChange={(value) => handleChange('shipping_state_c', value)}
                       error={errors.shipping_state_c}
                     />
                     <FormField
                       label="Country"
                       type="text"
-                      value={formData.shipping_country_c || ''}
+                      value={formData.shipping_country_c}
                       onChange={(value) => handleChange('shipping_country_c', value)}
                       error={errors.shipping_country_c}
                     />
                     <FormField
                       label="Pincode"
                       type="text"
-                      value={formData.shipping_pincode_c || ''}
+                      value={formData.shipping_pincode_c}
                       onChange={(value) => handleChange('shipping_pincode_c', value)}
                       error={errors.shipping_pincode_c}
                     />
